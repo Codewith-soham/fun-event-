@@ -45,6 +45,18 @@
             </div>
 
             <div class="input-group">
+                <label for="photoUpload">Upload Photo (Optional) 📷</label>
+                <input type="file" id="photoUpload" accept="image/*">
+                <div class="file-preview" id="photoPreview"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="musicUpload">Upload Music (Optional) 🎵</label>
+                <input type="file" id="musicUpload" accept="audio/*">
+                <div class="file-preview" id="musicPreview"></div>
+            </div>
+
+            <div class="input-group">
                 <label for="themeSelect">Select Theme</label>
                 <select id="themeSelect">
                     <option value="pink">Pink</option>
@@ -54,6 +66,7 @@
             </div>
 
             <button class="btn-generate" id="generateBtn">Generate Proposal</button>
+            <button class="btn-generate-link" id="generateLinkBtn">🔗 Generate Shareable Link</button>
         </div>
 
         <!-- Proposal Section (Initially Hidden) -->
@@ -77,6 +90,20 @@
                 <p class="celebration-message">I knew you'd say yes! ❤️</p>
                 <p class="celebration-couples" id="celebrationCouples"></p>
                 <button class="btn-restart" id="restartBtn">Create Another Proposal</button>
+            </div>
+        </div>
+
+        <!-- Link Generation Section (Initially Hidden) -->
+        <div class="link-section hidden" id="linkSection">
+            <div class="link-card">
+                <h2 class="link-title">✨ Your Shareable Link is Ready! ✨</h2>
+                <p class="link-description">Share this link with your special someone:</p>
+                <div class="link-display-container">
+                    <input type="text" id="generatedLink" class="link-input" readonly>
+                    <button class="btn-copy" id="copyLinkBtn">📋 Copy</button>
+                </div>
+                <p class="link-hint">💡 This link contains your message, photo, and music. It works on any device!</p>
+                <button class="btn-restart" id="restartBtn2">Create Another Proposal</button>
             </div>
         </div>
     </div>

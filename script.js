@@ -2,6 +2,7 @@
 const formSection = document.getElementById('formSection');
 const proposalSection = document.getElementById('proposalSection');
 const celebrationSection = document.getElementById('celebrationSection');
+const linkSection = document.getElementById('linkSection');
 const mainContainer = document.getElementById('mainContainer');
 
 const yourNameInput = document.getElementById('yourName');
@@ -10,15 +11,103 @@ const proposalMessageInput = document.getElementById('proposalMessage');
 const themeSelect = document.getElementById('themeSelect');
 const emotionSelect = document.getElementById('emotionSelect');
 
+// New file upload elements
+const photoUpload = document.getElementById('photoUpload');
+const musicUpload = document.getElementById('musicUpload');
+const photoPreview = document.getElementById('photoPreview');
+const musicPreview = document.getElementById('musicPreview');
+
 const generateBtn = document.getElementById('generateBtn');
 const generateMessageBtn = document.getElementById('generateMessageBtn');
+const generateLinkBtn = document.getElementById('generateLinkBtn');
 const yesBtn = document.getElementById('yesBtn');
 const noBtn = document.getElementById('noBtn');
 const restartBtn = document.getElementById('restartBtn');
+const restartBtn2 = document.getElementById('restartBtn2');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
 
 const coupleNames = document.getElementById('coupleNames');
 const customMessage = document.getElementById('customMessage');
 const celebrationCouples = document.getElementById('celebrationCouples');
+const generatedLink = document.getElementById('generatedLink');
+
+// Store uploaded file data
+let uploadedPhoto = null;
+let uploadedMusic = null;
+
+// ===== FILE UPLOAD HANDLERS =====
+
+/**
+ * Convert file to Base64 string
+ * @param {File} file - The file to convert
+ * @returns {Promise<string>} - Base64 encoded string
+ */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
+// Photo upload handler
+photoUpload.addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file!');
+            photoUpload.value = '';
+            return;
+        }
+
+        // Validate file size (max 2MB for URL encoding)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Image size should be less than 2MB for better link sharing!');
+            photoUpload.value = '';
+            return;
+        }
+
+        try {
+            uploadedPhoto = await fileToBase64(file);
+            photoPreview.innerHTML = `<img src="${uploadedPhoto}" alt="Preview"><br>✅ Photo uploaded: ${file.name}`;
+            photoPreview.classList.add('active');
+        } catch (error) {
+            alert('Error uploading photo. Please try again.');
+            console.error(error);
+        }
+    }
+});
+
+// Music upload handler
+musicUpload.addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Validate file type
+        if (!file.type.startsWith('audio/')) {
+            alert('Please select a valid audio file!');
+            musicUpload.value = '';
+            return;
+        }
+
+        // Validate file size (max 3MB for URL encoding)
+        if (file.size > 3 * 1024 * 1024) {
+            alert('Audio size should be less than 3MB for better link sharing!');
+            musicUpload.value = '';
+            return;
+        }
+
+        try {
+            uploadedMusic = await fileToBase64(file);
+            musicPreview.innerHTML = `🎵 Music uploaded: ${file.name}`;
+            musicPreview.classList.add('active');
+        } catch (error) {
+            alert('Error uploading music. Please try again.');
+            console.error(error);
+        }
+    }
+});
 
 // ===== EMOTION-BASED MESSAGE GENERATOR =====
 
@@ -176,11 +265,33 @@ function moveButtonRandomly() {
 
 // Restart button click handler
 restartBtn.addEventListener('click', function() {
+    resetForm();
+});
+
+// Restart button 2 (from link section) click handler
+restartBtn2.addEventListener('click', function() {
+    resetForm();
+});
+
+// Reset form function
+function resetForm() {
     // Reset all inputs
     yourNameInput.value = '';
     partnerNameInput.value = '';
     proposalMessageInput.value = '';
     themeSelect.value = 'pink';
+    photoUpload.value = '';
+    musicUpload.value = '';
+    
+    // Clear file previews
+    photoPreview.innerHTML = '';
+    photoPreview.classList.remove('active');
+    musicPreview.innerHTML = '';
+    musicPreview.classList.remove('active');
+    
+    // Reset uploaded files
+    uploadedPhoto = null;
+    uploadedMusic = null;
     
     // Reset theme
     document.body.classList.remove('pink', 'dark', 'lavender');
@@ -194,7 +305,87 @@ restartBtn.addEventListener('click', function() {
     // Show form, hide others
     celebrationSection.classList.add('hidden');
     proposalSection.classList.add('hidden');
+    linkSection.classList.add('hidden');
     formSection.classList.remove('hidden');
+}
+
+// ===== LINK GENERATION FEATURE =====
+
+/**
+ * Generate shareable proposal link
+ * Encodes all data into URL using Base64
+ */
+generateLinkBtn.addEventListener('click', function() {
+    // Get input values
+    const yourName = yourNameInput.value.trim();
+    const partnerName = partnerNameInput.value.trim();
+    const message = proposalMessageInput.value.trim();
+    const theme = themeSelect.value;
+
+    // Validate inputs
+    if (!yourName || !partnerName || !message) {
+        alert('Please fill in all required fields (names and message)!');
+        return;
+    }
+
+    // Create data object
+    const proposalData = {
+        yourName: yourName,
+        partnerName: partnerName,
+        message: message,
+        theme: theme,
+        photo: uploadedPhoto,
+        music: uploadedMusic,
+        timestamp: Date.now()
+    };
+
+    try {
+        // Encode data to Base64
+        const jsonString = JSON.stringify(proposalData);
+        const encodedData = btoa(encodeURIComponent(jsonString));
+        
+        // Create full URL
+        const baseUrl = window.location.href.replace('index.html', '');
+        const proposalUrl = `${baseUrl}proposal.html?data=${encodedData}`;
+        
+        // Display the link
+        generatedLink.value = proposalUrl;
+        
+        // Hide form, show link section
+        formSection.classList.add('hidden');
+        linkSection.classList.remove('hidden');
+        
+    } catch (error) {
+        alert('Error generating link. The data might be too large. Try using smaller files.');
+        console.error(error);
+    }
+});
+
+// Copy link to clipboard
+copyLinkBtn.addEventListener('click', function() {
+    generatedLink.select();
+    generatedLink.setSelectionRange(0, 99999); // For mobile devices
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(generatedLink.value).then(() => {
+        // Update button text
+        copyLinkBtn.textContent = '✅ Copied!';
+        copyLinkBtn.classList.add('copied');
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            copyLinkBtn.textContent = '📋 Copy';
+            copyLinkBtn.classList.remove('copied');
+        }, 2000);
+    }).catch(err => {
+        // Fallback for older browsers
+        document.execCommand('copy');
+        copyLinkBtn.textContent = '✅ Copied!';
+        
+        setTimeout(() => {
+            copyLinkBtn.textContent = '📋 Copy';
+        }, 2000);
+    });
 });
 
 // Initialize with default theme

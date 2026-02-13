@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Proposal 💖</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="proposalContainer">
+        <!-- Loading State -->
+        <div class="loading-section" id="loadingSection">
+            <h2>Loading your proposal... 💖</h2>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-section hidden" id="errorSection">
+            <h2>😢 Oops!</h2>
+            <p>This proposal link seems to be invalid or corrupted.</p>
+            <a href="index.html" class="btn-restart">Create Your Own Proposal</a>
+        </div>
+
+        <!-- Proposal Display -->
+        <div class="proposal-display hidden" id="proposalDisplay">
+            <div class="proposal-card">
+                <!-- Photo Display -->
+                <div class="photo-container" id="photoContainer">
+                    <img id="proposalPhoto" class="proposal-photo" alt="Special moment">
+                </div>
+
+                <!-- Names -->
+                <h2 class="couple-names" id="displayNames"></h2>
+
+                <!-- Message -->
+                <p class="custom-message" id="displayMessage"></p>
+
+                <!-- Question -->
+                <h3 class="question">Will you be my Valentine?</h3>
+
+                <!-- Music Control -->
+                <button class="btn-music-toggle hidden" id="musicToggle">🔇 Unmute Music</button>
+
+                <!-- Response Buttons -->
+                <div class="button-group" id="responseButtons">
+                    <button class="btn-yes" id="acceptBtn">💚 Yes</button>
+                    <button class="btn-no" id="rejectBtn">💔 No</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accept Response -->
+        <div class="response-section hidden" id="acceptSection">
+            <div class="response-card accept-animation">
+                <h1 class="response-title">🎉 She said YES! ❤️</h1>
+                <p class="response-message">This is the beginning of something beautiful!</p>
+                <div class="confetti">
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reject Response -->
+        <div class="response-section hidden" id="rejectSection">
+            <div class="response-card">
+                <h2 class="response-title">💔 Maybe next time</h2>
+                <p class="response-message">Timing is everything. Stay positive!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="proposalMusic" loop></audio>
+
+    <script src="proposal.js"></script>
+</body>
+</html>
