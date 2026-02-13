@@ -1,0 +1,380 @@
+/* Global Styles and Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.5s ease;
+}
+
+/* Theme Backgrounds */
+body.pink {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ffc3a0 100%);
+}
+
+body.dark {
+    background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);
+}
+
+body.lavender {
+    background: linear-gradient(135deg, #c084fc 0%, #e0c3fc 100%);
+}
+
+/* Default theme */
+body {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ffc3a0 100%);
+}
+
+/* Main Container */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    min-height: 400px;
+}
+
+/* Form Section */
+.form-section {
+    animation: fadeIn 0.5s ease;
+}
+
+.form-section h1 {
+    text-align: center;
+    color: #e91e63;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #e91e63;
+}
+
+.input-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Buttons */
+.btn-generate {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #e91e63, #f06292);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
+}
+
+.btn-generate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(233, 30, 99, 0.3);
+}
+
+.btn-generate:active {
+    transform: translateY(0);
+}
+
+/* Message Generator Button */
+.message-controls {
+    margin-bottom: 10px;
+}
+
+.btn-generate-message {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #9c27b0, #ba68c8);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-generate-message:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
+}
+
+.btn-generate-message:active {
+    transform: translateY(0);
+}
+
+body.dark .btn-generate-message {
+    background: linear-gradient(135deg, #5b21b6, #7c3aed);
+}
+
+body.lavender .btn-generate-message {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+}
+
+/* Proposal Section */
+.proposal-section {
+    animation: fadeIn 0.5s ease;
+}
+
+.proposal-card {
+    text-align: center;
+}
+
+.couple-names {
+    font-size: 32px;
+    color: #e91e63;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.custom-message {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #e91e63;
+}
+
+.question {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.button-group {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-yes,
+.btn-no {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-yes {
+    background: linear-gradient(135deg, #4caf50, #81c784);
+    color: white;
+}
+
+.btn-yes:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+}
+
+.btn-no {
+    background: linear-gradient(135deg, #f44336, #e57373);
+    color: white;
+    position: relative;
+}
+
+/* Celebration Section */
+.celebration-section {
+    text-align: center;
+    animation: bounceIn 0.6s ease;
+}
+
+.celebration-card {
+    padding: 20px;
+}
+
+.celebration-title {
+    font-size: 48px;
+    color: #e91e63;
+    margin-bottom: 20px;
+    animation: pulse 1s infinite;
+}
+
+.celebration-message {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.celebration-couples {
+    font-size: 28px;
+    color: #e91e63;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.btn-restart {
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #2196f3, #64b5f6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-restart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Theme-specific button styles */
+body.dark .btn-generate {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+body.dark .couple-names,
+body.dark .celebration-title,
+body.dark .celebration-couples {
+    color: #667eea;
+}
+
+body.dark .custom-message {
+    border-left-color: #667eea;
+}
+
+body.lavender .btn-generate {
+    background: linear-gradient(135deg, #a855f7, #c084fc);
+}
+
+body.lavender .couple-names,
+body.lavender .celebration-title,
+body.lavender .celebration-couples {
+    color: #a855f7;
+}
+
+body.lavender .custom-message {
+    border-left-color: #a855f7;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 30px 20px;
+        width: 95%;
+    }
+
+    .form-section h1 {
+        font-size: 24px;
+    }
+
+    .couple-names {
+        font-size: 26px;
+    }
+
+    .custom-message {
+        font-size: 16px;
+    }
+
+    .question {
+        font-size: 20px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-yes,
+    .btn-no {
+        width: 100%;
+    }
+
+    .celebration-title {
+        font-size: 36px;
+    }
+
+    .celebration-message {
+        font-size: 20px;
+    }
+
+    .celebration-couples {
+        font-size: 24px;
+    }
+}

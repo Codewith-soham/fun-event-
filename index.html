@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Proposal Builder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <!-- Form Section -->
+        <div class="form-section" id="formSection">
+            <h1>💖 Create Your Digital Proposal 💖</h1>
+            
+            <div class="input-group">
+                <label for="yourName">Your Name</label>
+                <input type="text" id="yourName" placeholder="Enter your name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="partnerName">Partner Name</label>
+                <input type="text" id="partnerName" placeholder="Enter partner's name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="emotionSelect">Select Message Tone</label>
+                <select id="emotionSelect">
+                    <option value="emotional">Emotional</option>
+                    <option value="fun">Fun/Playful</option>
+                    <option value="cute">Cute</option>
+                    <option value="casual">Casual</option>
+                    <option value="confident">Confident</option>
+                    <option value="shy">Shy</option>
+                    <option value="deep">Deep/Heartfelt</option>
+                    <option value="polite">Respectful & Polite</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="proposalMessage">Custom Proposal Message</label>
+                <div class="message-controls">
+                    <button type="button" class="btn-generate-message" id="generateMessageBtn">✨ Generate Message</button>
+                </div>
+                <textarea id="proposalMessage" rows="4" placeholder="Write your heartfelt message or use the generator above..." required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="themeSelect">Select Theme</label>
+                <select id="themeSelect">
+                    <option value="pink">Pink</option>
+                    <option value="dark">Dark</option>
+                    <option value="lavender">Lavender</option>
+                </select>
+            </div>
+
+            <button class="btn-generate" id="generateBtn">Generate Proposal</button>
+        </div>
+
+        <!-- Proposal Section (Initially Hidden) -->
+        <div class="proposal-section hidden" id="proposalSection">
+            <div class="proposal-card">
+                <h2 class="couple-names" id="coupleNames"></h2>
+                <p class="custom-message" id="customMessage"></p>
+                <h3 class="question">Will you be my Valentine?</h3>
+                
+                <div class="button-group">
+                    <button class="btn-yes" id="yesBtn">Yes 💖</button>
+                    <button class="btn-no" id="noBtn">No 😢</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Celebration Section (Initially Hidden) -->
+        <div class="celebration-section hidden" id="celebrationSection">
+            <div class="celebration-card">
+                <h1 class="celebration-title">🎉 Yay! 🎉</h1>
+                <p class="celebration-message">I knew you'd say yes! ❤️</p>
+                <p class="celebration-couples" id="celebrationCouples"></p>
+                <button class="btn-restart" id="restartBtn">Create Another Proposal</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
