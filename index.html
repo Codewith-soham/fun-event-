@@ -17,7 +17,7 @@
             <h1 class="hero-title">ProposalCraft - Create Magical Proposals</h1>
             <p class="hero-subtitle">
                 Build a beautiful proposal in minutes. Add your message, theme,
-                photo, and music, then reveal it with a single click.
+                and photo, then reveal it with a single click.
             </p>
             <div class="hero-actions">
                 <button class="btn primary" id="startCreateBtn" type="button">Create Proposal</button>
@@ -79,12 +79,6 @@
                     <input type="file" id="photoUpload" accept="image/*">
                     <div class="file-preview" id="photoPreview"></div>
                 </div>
-
-                <div class="input-group">
-                    <label for="musicUpload">Upload Background Music</label>
-                    <input type="file" id="musicUpload" accept="audio/*">
-                    <div class="file-preview" id="musicPreview"></div>
-                </div>
             </div>
 
             <button class="btn primary full" id="previewBtn">Preview Proposal</button>
@@ -99,28 +93,11 @@
                     <h2 class="preview-names" id="previewNames"></h2>
                     <p class="preview-message" id="previewMessage"></p>
 
-                    <div class="music-panel hidden" id="musicPanel">
-                        <button class="icon-btn" id="playBtn" type="button" aria-label="Play">
-                            ▶
-                        </button>
-                        <button class="icon-btn" id="muteBtn" type="button" aria-label="Mute">
-                            🔇
-                        </button>
-                        <div class="volume-group">
-                            <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
-                            <span id="volumeValue">70%</span>
-                        </div>
-                    </div>
-
                     <div class="preview-actions">
                         <button class="btn success" id="acceptBtn">Accept ❤️</button>
                         <button class="btn danger" id="rejectBtn">Reject 💔</button>
                     </div>
                 </div>
-            </div>
-
-            <div class="preview-footer">
-                <button class="btn ghost" id="editBtn">Edit Proposal</button>
             </div>
         </section>
     </main>
@@ -128,7 +105,7 @@
     <div id="startOverlay" class="overlay start-overlay hidden">
         <div class="overlay-card">
             <h1 class="overlay-title">Click to Begin 💖</h1>
-            <p class="overlay-message">Start the music and reveal the message.</p>
+            <p class="overlay-message">Reveal the message.</p>
             <button class="btn primary" id="startButton" type="button">Begin</button>
         </div>
     </div>
@@ -153,8 +130,6 @@
             <p class="overlay-message">Thanks for being honest and kind.</p>
         </div>
     </div>
-
-    <audio id="bgMusic"></audio>
 
     <script src="script.js"></script>
 </body>

@@ -6,7 +6,6 @@ const previewSection = document.getElementById('previewSection');
 // DOM Elements - Buttons
 const startCreateBtn = document.getElementById('startCreateBtn');
 const previewBtn = document.getElementById('previewBtn');
-const editBtn = document.getElementById('editBtn');
 const generateMessageBtn = document.getElementById('generateMessageBtn');
 const acceptBtn = document.getElementById('acceptBtn');
 const rejectBtn = document.getElementById('rejectBtn');
@@ -18,9 +17,7 @@ const proposalMessageInput = document.getElementById('proposalMessage');
 const toneSelect = document.getElementById('toneSelect');
 const themeSelect = document.getElementById('themeSelect');
 const photoUpload = document.getElementById('photoUpload');
-const musicUpload = document.getElementById('musicUpload');
 const photoPreview = document.getElementById('photoPreview');
-const musicPreview = document.getElementById('musicPreview');
 
 // DOM Elements - Preview
 const previewImageWrap = document.getElementById('previewImageWrap');
@@ -28,29 +25,17 @@ const previewImage = document.getElementById('previewImage');
 const previewNames = document.getElementById('previewNames');
 const previewMessage = document.getElementById('previewMessage');
 
-// DOM Elements - Music Panel
-const musicPanel = document.getElementById('musicPanel');
-const playBtn = document.getElementById('playBtn');
-const muteBtn = document.getElementById('muteBtn');
-const volumeControl = document.getElementById('volumeControl');
-const volumeValue = document.getElementById('volumeValue');
-
 // DOM Elements - Overlays
 const startOverlay = document.getElementById('startOverlay');
 const startButton = document.getElementById('startButton');
 const successOverlay = document.getElementById('successOverlay');
 const rejectOverlay = document.getElementById('rejectOverlay');
 
-// Audio Element
-const bgMusic = document.getElementById('bgMusic');
-
 // Constants
 const THEME_CLASSES = ['theme-romantic', 'theme-cute', 'theme-dark', 'theme-minimal'];
 
 // State Variables
 let uploadedPhoto = null;
-let uploadedMusicUrl = null;
-let isMusicPlaying = false;
 let typingTimer = null;
 let typingIndex = 0;
 let fullMessage = '';
@@ -163,18 +148,6 @@ function renderPreview() {
         previewImageWrap.classList.add('hidden');
     }
 
-    // Handle music setup
-    if (uploadedMusicUrl) {
-        bgMusic.src = uploadedMusicUrl;
-        bgMusic.volume = Number(volumeControl.value);
-        bgMusic.loop = true;
-        bgMusic.load();
-        musicPanel.classList.remove('hidden');
-    } else {
-        musicPanel.classList.add('hidden');
-        bgMusic.src = '';
-    }
-
     // Apply theme
     setThemeClass(theme);
 
@@ -213,51 +186,6 @@ function startTyping() {
     }, 28);
 }
 
-// ==================== MUSIC CONTROLS ====================
-
-function startMusic() {
-    if (!bgMusic.src) return;
-
-    bgMusic.play()
-        .then(() => {
-            isMusicPlaying = true;
-            playBtn.textContent = '⏸';
-        })
-        .catch(error => {
-            console.error('Audio playback failed:', error);
-            alert('Please tap to enable audio playback.');
-        });
-}
-
-function pauseMusic() {
-    if (!bgMusic.src) return;
-    
-    bgMusic.pause();
-    isMusicPlaying = false;
-    playBtn.textContent = '▶';
-}
-
-function togglePlayPause() {
-    if (isMusicPlaying) {
-        pauseMusic();
-    } else {
-        startMusic();
-    }
-}
-
-function toggleMute() {
-    if (!bgMusic.src) return;
-    
-    bgMusic.muted = !bgMusic.muted;
-    muteBtn.textContent = bgMusic.muted ? '🔇' : '🔊';
-}
-
-function changeVolume(value) {
-    const volume = Number(value);
-    bgMusic.volume = volume;
-    volumeValue.textContent = `${Math.round(volume * 100)}%`;
-}
-
 // ==================== OVERLAY HANDLERS ====================
 
 function handleAccept() {
@@ -266,9 +194,6 @@ function handleAccept() {
 
 function handleReject() {
     rejectOverlay.classList.remove('hidden');
-    if (isMusicPlaying) {
-        pauseMusic();
-    }
 }
 
 function moveRejectButton() {
@@ -333,40 +258,6 @@ async function handlePhotoUpload(event) {
     }
 }
 
-
-function handleMusicUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Check type
-    if (!file.type.startsWith('audio/')) {
-        alert('Please select a valid audio file.');
-        musicUpload.value = '';
-        return;
-    }
-
-    // Limit size
-    if (file.size > 5 * 1024 * 1024) {
-        alert('Audio file too large (max 5MB).');
-        musicUpload.value = '';
-        return;
-    }
-
-    // Revoke previous URL
-    if (uploadedMusicUrl) URL.revokeObjectURL(uploadedMusicUrl);
-
-    // Create new URL for playback
-    uploadedMusicUrl = URL.createObjectURL(file);
-    bgMusic.src = uploadedMusicUrl;
-    bgMusic.load();
-    bgMusic.loop = true;
-    musicPreview.textContent = `Music loaded: ${file.name}`;
-    playBtn.textContent = '▶';
-    isMusicPlaying = false;
-
-    console.log("Music ready:", file.name, uploadedMusicUrl);
-}
-
 // ==================== NAVIGATION HANDLERS ====================
 
 function handleStartCreate() {
@@ -392,17 +283,7 @@ function handleThemeChange() {
 
 function handleStartOverlay() {
     startOverlay.classList.add('hidden');
-    startMusic();
     startTyping();
-}
-
-function handleEditProposal() {
-    previewSection.classList.add('hidden');
-    generatorSection.classList.remove('hidden');
-    startOverlay.classList.add('hidden');
-    successOverlay.classList.add('hidden');
-    rejectOverlay.classList.add('hidden');
-    pauseMusic();
 }
 
 // ==================== EVENT LISTENERS ====================
@@ -410,7 +291,6 @@ function handleEditProposal() {
 // Navigation
 startCreateBtn.addEventListener('click', handleStartCreate);
 previewBtn.addEventListener('click', renderPreview);
-editBtn.addEventListener('click', handleEditProposal);
 
 // Generator
 generateMessageBtn.addEventListener('click', handleGenerateMessage);
@@ -418,7 +298,6 @@ themeSelect.addEventListener('change', handleThemeChange);
 
 // File Uploads
 photoUpload.addEventListener('change', handlePhotoUpload);
-musicUpload.addEventListener('change', handleMusicUpload);
 
 // Overlays
 startButton.addEventListener('click', handleStartOverlay);
@@ -426,13 +305,7 @@ acceptBtn.addEventListener('click', handleAccept);
 rejectBtn.addEventListener('click', handleReject);
 rejectBtn.addEventListener('mouseenter', moveRejectButton);
 
-// Music Controls
-playBtn.addEventListener('click', togglePlayPause);
-muteBtn.addEventListener('click', toggleMute);
-volumeControl.addEventListener('input', event => changeVolume(event.target.value));
-
 // ==================== INITIALIZATION ====================
 
 generateFloatingHearts();
-changeVolume(volumeControl.value);
 setThemeClass('romantic');
