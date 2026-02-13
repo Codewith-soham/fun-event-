@@ -3,110 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Proposal Builder</title>
+    <title>ProposalCraft - Create Magical Proposals</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container" id="mainContainer">
-        <!-- Form Section -->
-        <div class="form-section" id="formSection">
-            <h1>💖 Create Your Digital Proposal 💖</h1>
-            
-            <div class="input-group">
-                <label for="yourName">Your Name</label>
-                <input type="text" id="yourName" placeholder="Enter your name" required>
-            </div>
+<body class="theme-romantic">
+    <div class="hearts" id="heartsContainer" aria-hidden="true"></div>
 
-            <div class="input-group">
-                <label for="partnerName">Partner Name</label>
-                <input type="text" id="partnerName" placeholder="Enter partner's name" required>
+    <main class="page">
+        <section id="landingSection" class="glass-card hero-card fade-in">
+            <h1 class="hero-title">ProposalCraft - Create Magical Proposals</h1>
+            <p class="hero-subtitle">
+                Build a beautiful proposal in minutes. Add your message, theme,
+                photo, and music, then reveal it with a single click.
+            </p>
+            <div class="hero-actions">
+                <button class="btn primary" id="startCreateBtn" type="button">Create Proposal</button>
             </div>
+        </section>
 
-            <div class="input-group">
-                <label for="emotionSelect">Select Message Tone</label>
-                <select id="emotionSelect">
-                    <option value="emotional">Emotional</option>
-                    <option value="fun">Fun/Playful</option>
-                    <option value="cute">Cute</option>
-                    <option value="casual">Casual</option>
-                    <option value="confident">Confident</option>
-                    <option value="shy">Shy</option>
-                    <option value="deep">Deep/Heartfelt</option>
-                    <option value="polite">Respectful & Polite</option>
-                </select>
-            </div>
+        <section id="generatorSection" class="glass-card form-card fade-in hidden">
+            <header class="section-header">
+                <h2 class="section-title">Create Your Proposal</h2>
+                <p class="section-subtitle">Fill in the details and preview your proposal instantly.</p>
+            </header>
 
-            <div class="input-group">
-                <label for="proposalMessage">Custom Proposal Message</label>
-                <div class="message-controls">
-                    <button type="button" class="btn-generate-message" id="generateMessageBtn">✨ Generate Message</button>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="yourName">Your Name</label>
+                    <input type="text" id="yourName" placeholder="Your name" required>
                 </div>
-                <textarea id="proposalMessage" rows="4" placeholder="Write your heartfelt message or use the generator above..." required></textarea>
-            </div>
-
-            <div class="input-group">
-                <label for="photoUpload">Upload Photo (Optional) 📷</label>
-                <input type="file" id="photoUpload" accept="image/*">
-                <div class="file-preview" id="photoPreview"></div>
-            </div>
-
-            <div class="input-group">
-                <label for="musicUpload">Upload Music (Optional) 🎵</label>
-                <input type="file" id="musicUpload" accept="audio/*">
-                <div class="file-preview" id="musicPreview"></div>
-            </div>
-
-            <div class="input-group">
-                <label for="themeSelect">Select Theme</label>
-                <select id="themeSelect">
-                    <option value="pink">Pink</option>
-                    <option value="dark">Dark</option>
-                    <option value="lavender">Lavender</option>
-                </select>
-            </div>
-
-            <button class="btn-generate" id="generateBtn">Generate Proposal</button>
-            <button class="btn-generate-link" id="generateLinkBtn">🔗 Generate Shareable Link</button>
-        </div>
-
-        <!-- Proposal Section (Initially Hidden) -->
-        <div class="proposal-section hidden" id="proposalSection">
-            <div class="proposal-card">
-                <h2 class="couple-names" id="coupleNames"></h2>
-                <p class="custom-message" id="customMessage"></p>
-                <h3 class="question">Will you be my Valentine?</h3>
-                
-                <div class="button-group">
-                    <button class="btn-yes" id="yesBtn">Yes 💖</button>
-                    <button class="btn-no" id="noBtn">No 😢</button>
+                <div class="input-group">
+                    <label for="partnerName">Partner Name</label>
+                    <input type="text" id="partnerName" placeholder="Partner's name" required>
                 </div>
             </div>
-        </div>
 
-        <!-- Celebration Section (Initially Hidden) -->
-        <div class="celebration-section hidden" id="celebrationSection">
-            <div class="celebration-card">
-                <h1 class="celebration-title">🎉 Yay! 🎉</h1>
-                <p class="celebration-message">I knew you'd say yes! ❤️</p>
-                <p class="celebration-couples" id="celebrationCouples"></p>
-                <button class="btn-restart" id="restartBtn">Create Another Proposal</button>
-            </div>
-        </div>
-
-        <!-- Link Generation Section (Initially Hidden) -->
-        <div class="link-section hidden" id="linkSection">
-            <div class="link-card">
-                <h2 class="link-title">✨ Your Shareable Link is Ready! ✨</h2>
-                <p class="link-description">Share this link with your special someone:</p>
-                <div class="link-display-container">
-                    <input type="text" id="generatedLink" class="link-input" readonly>
-                    <button class="btn-copy" id="copyLinkBtn">📋 Copy</button>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="toneSelect">Message Tone</label>
+                    <select id="toneSelect">
+                        <option value="deep-romantic">Deep Romantic</option>
+                        <option value="cute-playful">Cute & Playful</option>
+                        <option value="emotional">Emotional</option>
+                        <option value="filmy">Filmy Bollywood</option>
+                        <option value="minimal-elegant">Minimal & Elegant</option>
+                    </select>
                 </div>
-                <p class="link-hint">💡 This link contains your message, photo, and music. It works on any device!</p>
-                <button class="btn-restart" id="restartBtn2">Create Another Proposal</button>
+                <div class="input-group">
+                    <label>&nbsp;</label>
+                    <button class="btn ghost" id="generateMessageBtn" type="button">Generate Romantic Message</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="proposalMessage">Custom Message</label>
+                <textarea id="proposalMessage" rows="5" placeholder="Write something thoughtful and genuine..." required></textarea>
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="themeSelect">Theme</label>
+                    <select id="themeSelect">
+                        <option value="romantic">Romantic</option>
+                        <option value="cute">Cute</option>
+                        <option value="dark">Dark</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="photoUpload">Upload Image</label>
+                    <input type="file" id="photoUpload" accept="image/*">
+                    <div class="file-preview" id="photoPreview"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="musicUpload">Upload Background Music</label>
+                    <input type="file" id="musicUpload" accept="audio/*">
+                    <div class="file-preview" id="musicPreview"></div>
+                </div>
+            </div>
+
+            <button class="btn primary full" id="previewBtn">Preview Proposal</button>
+        </section>
+
+        <section id="previewSection" class="glass-card proposal-card fade-in hidden">
+            <div class="preview-card slide-up">
+                <div class="preview-image" id="previewImageWrap">
+                    <img id="previewImage" alt="Proposal photo preview">
+                </div>
+                <div class="preview-content">
+                    <h2 class="preview-names" id="previewNames"></h2>
+                    <p class="preview-message" id="previewMessage"></p>
+
+                    <div class="music-panel hidden" id="musicPanel">
+                        <button class="icon-btn" id="playBtn" type="button" aria-label="Play">
+                            ▶
+                        </button>
+                        <button class="icon-btn" id="muteBtn" type="button" aria-label="Mute">
+                            🔇
+                        </button>
+                        <div class="volume-group">
+                            <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
+                            <span id="volumeValue">70%</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-actions">
+                        <button class="btn success" id="acceptBtn">Accept ❤️</button>
+                        <button class="btn danger" id="rejectBtn">Reject 💔</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-footer">
+                <button class="btn ghost" id="editBtn">Edit Proposal</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="startOverlay" class="overlay start-overlay hidden">
+        <div class="overlay-card">
+            <h1 class="overlay-title">Click to Begin 💖</h1>
+            <p class="overlay-message">Start the music and reveal the message.</p>
+            <button class="btn primary" id="startButton" type="button">Begin</button>
+        </div>
+    </div>
+
+    <div id="successOverlay" class="overlay hidden">
+        <div class="overlay-card">
+            <h1 class="overlay-title">Love compiled successfully</h1>
+            <p class="overlay-message">This is the start of something beautiful.</p>
+            <div class="confetti">
+                <span class="confetti-piece"></span>
+                <span class="confetti-piece"></span>
+                <span class="confetti-piece"></span>
+                <span class="confetti-piece"></span>
+                <span class="confetti-piece"></span>
             </div>
         </div>
     </div>
+
+    <div id="rejectOverlay" class="overlay hidden">
+        <div class="overlay-card">
+            <h1 class="overlay-title">Maybe next time 💔</h1>
+            <p class="overlay-message">Thanks for being honest and kind.</p>
+        </div>
+    </div>
+
+    <audio id="bgMusic"></audio>
 
     <script src="script.js"></script>
 </body>

@@ -1,47 +1,96 @@
-// Get DOM elements
-const formSection = document.getElementById('formSection');
-const proposalSection = document.getElementById('proposalSection');
-const celebrationSection = document.getElementById('celebrationSection');
-const linkSection = document.getElementById('linkSection');
-const mainContainer = document.getElementById('mainContainer');
+// DOM Elements - Sections
+const landingSection = document.getElementById('landingSection');
+const generatorSection = document.getElementById('generatorSection');
+const previewSection = document.getElementById('previewSection');
 
+// DOM Elements - Buttons
+const startCreateBtn = document.getElementById('startCreateBtn');
+const previewBtn = document.getElementById('previewBtn');
+const editBtn = document.getElementById('editBtn');
+const generateMessageBtn = document.getElementById('generateMessageBtn');
+const acceptBtn = document.getElementById('acceptBtn');
+const rejectBtn = document.getElementById('rejectBtn');
+
+// DOM Elements - Inputs
 const yourNameInput = document.getElementById('yourName');
 const partnerNameInput = document.getElementById('partnerName');
 const proposalMessageInput = document.getElementById('proposalMessage');
+const toneSelect = document.getElementById('toneSelect');
 const themeSelect = document.getElementById('themeSelect');
-const emotionSelect = document.getElementById('emotionSelect');
-
-// New file upload elements
 const photoUpload = document.getElementById('photoUpload');
 const musicUpload = document.getElementById('musicUpload');
 const photoPreview = document.getElementById('photoPreview');
 const musicPreview = document.getElementById('musicPreview');
 
-const generateBtn = document.getElementById('generateBtn');
-const generateMessageBtn = document.getElementById('generateMessageBtn');
-const generateLinkBtn = document.getElementById('generateLinkBtn');
-const yesBtn = document.getElementById('yesBtn');
-const noBtn = document.getElementById('noBtn');
-const restartBtn = document.getElementById('restartBtn');
-const restartBtn2 = document.getElementById('restartBtn2');
-const copyLinkBtn = document.getElementById('copyLinkBtn');
+// DOM Elements - Preview
+const previewImageWrap = document.getElementById('previewImageWrap');
+const previewImage = document.getElementById('previewImage');
+const previewNames = document.getElementById('previewNames');
+const previewMessage = document.getElementById('previewMessage');
 
-const coupleNames = document.getElementById('coupleNames');
-const customMessage = document.getElementById('customMessage');
-const celebrationCouples = document.getElementById('celebrationCouples');
-const generatedLink = document.getElementById('generatedLink');
+// DOM Elements - Music Panel
+const musicPanel = document.getElementById('musicPanel');
+const playBtn = document.getElementById('playBtn');
+const muteBtn = document.getElementById('muteBtn');
+const volumeControl = document.getElementById('volumeControl');
+const volumeValue = document.getElementById('volumeValue');
 
-// Store uploaded file data
+// DOM Elements - Overlays
+const startOverlay = document.getElementById('startOverlay');
+const startButton = document.getElementById('startButton');
+const successOverlay = document.getElementById('successOverlay');
+const rejectOverlay = document.getElementById('rejectOverlay');
+
+// Audio Element
+const bgMusic = document.getElementById('bgMusic');
+
+// Constants
+const THEME_CLASSES = ['theme-romantic', 'theme-cute', 'theme-dark', 'theme-minimal'];
+
+// State Variables
 let uploadedPhoto = null;
-let uploadedMusic = null;
+let uploadedMusicUrl = null;
+let isMusicPlaying = false;
+let typingTimer = null;
+let typingIndex = 0;
+let fullMessage = '';
+let rejectButtonMoveCount = 0;
 
-// ===== FILE UPLOAD HANDLERS =====
+// ==================== UTILITY FUNCTIONS ====================
 
-/**
- * Convert file to Base64 string
- * @param {File} file - The file to convert
- * @returns {Promise<string>} - Base64 encoded string
- */
+function generateFloatingHearts() {
+    const heartsContainer = document.getElementById('heartsContainer');
+    if (!heartsContainer) return;
+    
+    heartsContainer.innerHTML = '';
+    const heartCount = 80 + Math.floor(Math.random() * 21);
+    
+    for (let i = 0; i < heartCount; i++) {
+        const heart = document.createElement('span');
+        heart.className = 'heart';
+        
+        const size = 10 + Math.random() * 20;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 12;
+        const duration = 10 + Math.random() * 8;
+        const opacity = 0.2 + Math.random() * 0.3;
+        
+        heart.style.left = `${left}%`;
+        heart.style.width = `${size}px`;
+        heart.style.height = `${size}px`;
+        heart.style.animationDelay = `${delay}s`;
+        heart.style.animationDuration = `${duration}s`;
+        heart.style.opacity = opacity;
+        
+        heartsContainer.appendChild(heart);
+    }
+}
+
+function setThemeClass(theme) {
+    document.body.classList.remove(...THEME_CLASSES);
+    document.body.classList.add(`theme-${theme}`);
+}
+
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -51,342 +100,339 @@ function fileToBase64(file) {
     });
 }
 
-// Photo upload handler
-photoUpload.addEventListener('change', async function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-            alert('Please select a valid image file!');
-            photoUpload.value = '';
-            return;
-        }
+// ==================== MESSAGE GENERATION ====================
 
-        // Validate file size (max 2MB for URL encoding)
-        if (file.size > 2 * 1024 * 1024) {
-            alert('Image size should be less than 2MB for better link sharing!');
-            photoUpload.value = '';
-            return;
-        }
-
-        try {
-            uploadedPhoto = await fileToBase64(file);
-            photoPreview.innerHTML = `<img src="${uploadedPhoto}" alt="Preview"><br>✅ Photo uploaded: ${file.name}`;
-            photoPreview.classList.add('active');
-        } catch (error) {
-            alert('Error uploading photo. Please try again.');
-            console.error(error);
-        }
-    }
-});
-
-// Music upload handler
-musicUpload.addEventListener('change', async function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        // Validate file type
-        if (!file.type.startsWith('audio/')) {
-            alert('Please select a valid audio file!');
-            musicUpload.value = '';
-            return;
-        }
-
-        // Validate file size (max 3MB for URL encoding)
-        if (file.size > 3 * 1024 * 1024) {
-            alert('Audio size should be less than 3MB for better link sharing!');
-            musicUpload.value = '';
-            return;
-        }
-
-        try {
-            uploadedMusic = await fileToBase64(file);
-            musicPreview.innerHTML = `🎵 Music uploaded: ${file.name}`;
-            musicPreview.classList.add('active');
-        } catch (error) {
-            alert('Error uploading music. Please try again.');
-            console.error(error);
-        }
-    }
-});
-
-// ===== EMOTION-BASED MESSAGE GENERATOR =====
-
-/**
- * Generates a proposal message based on the selected emotion/tone
- * @param {string} emotion - The emotion type (emotional, fun, cute, etc.)
- * @param {string} name - The partner's name
- * @returns {string} - Generated proposal message
- */
-function generateProposalMessage(emotion, name) {
-    // Message templates for each emotion type
-    const messageTemplates = {
+function generateRomanticMessage(tone, partnerName) {
+    const templates = {
+        'deep-romantic': [
+            "I have been thinking about this for a while, {{partnerName}}. You make everything feel softer and brighter. I would love to see where this could go, if you are open to it.",
+            "{{partnerName}}, you bring a calm and beautiful energy into my life. I would love the chance to be more than friends, at a pace that feels right for both of us.",
+            "Every time we talk, I feel a little more sure about this. I care about you deeply, {{partnerName}}, and I would love to explore something meaningful together."
+        ],
+        'cute-playful': [
+            "Okay {{partnerName}}, small confession: I like you. A lot. Want to go on a cute little date and see if we are a vibe?",
+            "{{partnerName}}, you are my favorite notification. I would love to take you out sometime and see if this turns into something special.",
+            "Hi {{partnerName}}, you make me smile way too easily. Want to grab coffee and let this story begin?"
+        ],
         emotional: [
-            `Hey ${name}, I've been thinking about this for a while now. You make my days brighter just by being yourself. I really care about you, and I'd love to see where this could go. Would you like to give us a chance?`,
-            `${name}, getting to know you has been one of the best parts of my life. You inspire me and make me want to be better. I have feelings for you that I can't ignore anymore. Would you be open to exploring this with me?`,
-            `I need to be honest with you, ${name}. Every moment we spend together means so much to me. You've become someone truly special in my life. I'd really like to take this friendship to something more, if you feel the same way.`
+            "{{partnerName}}, getting to know you has been such a bright spot for me. I feel a real connection with you. If you feel the same, I would love to take you out sometime.",
+            "I wanted to be honest with you, {{partnerName}}. I really like you, and I would love to see if we could be something more. No pressure, just sincerity.",
+            "You mean a lot to me, {{partnerName}}. I would love to explore this feeling together, if you are open to it."
         ],
-        fun: [
-            `So ${name}, I've been running a very scientific analysis, and the data shows I really like you. Like, a LOT. Want to go on this adventure together and see what happens? 😊`,
-            `Okay ${name}, confession time: I think you're pretty amazing. Like, maybe-we-should-hang-out-more-and-make-this-official amazing. What do you say?`,
-            `${name}, I'm just gonna say it—you're awesome and I'd be silly not to shoot my shot. Want to grab coffee sometime and maybe... make this a thing? 😄`
+        filmy: [
+            "{{partnerName}}, aaj dil ne kah diya. Every moment with you feels like a scene from a movie. Would you let me take you on a real-life date?",
+            "Filmy line nahi, bas simple truth, {{partnerName}}: you have my attention and my heart. Coffee pe milte hain?",
+            "{{partnerName}}, kuch toh hai tum mein. I would love to write a beautiful chapter together, starting with a date."
         ],
-        cute: [
-            `Hi ${name} 🥺 I really enjoy spending time with you. You make me smile even on my worst days. Would you maybe want to be more than friends? No pressure at all!`,
-            `${name}, you're genuinely one of the sweetest people I know. I find myself thinking about you a lot lately. Would you be interested in going on a date with me sometime? 💕`,
-            `Hey ${name}, I know this might be sudden, but I think you're really special. You make my heart happy whenever we talk. Would you like to see where this could go?`
-        ],
-        casual: [
-            `Hey ${name}, so I've been wanting to tell you—I think you're really cool and I like spending time with you. Would you want to hang out more often, maybe as something more than friends?`,
-            `${name}, I'll be straight with you. I like you, and I think we vibe well together. Want to see if there's something here worth exploring?`,
-            `Yo ${name}, I'm just gonna put it out there—I'm into you. No big dramatic speech, just genuine interest. What do you think?`
-        ],
-        confident: [
-            `${name}, I believe in being direct. I think you're incredible, and I'd like to take you out sometime. I think we could have something really great together. What do you say?`,
-            `Hey ${name}, I know what I want, and that's to get to know you better. You've caught my attention in the best way. Would you be interested in going on a date with me?`,
-            `${name}, I'm not one to beat around the bush. I find you fascinating, and I'd love the opportunity to take you out. Are you free this weekend?`
-        ],
-        shy: [
-            `Hi ${name}... this is kind of hard for me to say, but I think you're really amazing. I've liked you for a while now, and I was wondering if you'd maybe want to go out sometime? It's okay if not! 😊`,
-            `${name}, I'm a bit nervous saying this, but I wanted you to know that I have feelings for you. You're always so kind and genuine. Would you be interested in maybe trying a date? No worries if not!`,
-            `Um, ${name}? I've been working up the courage to tell you this. I really like you and I think you're wonderful. Would you possibly want to get coffee together sometime? I understand if you need time to think about it.`
-        ],
-        deep: [
-            `${name}, I believe that meaningful connections are rare. Since we've met, I've felt something I can't quite explain. You challenge me, inspire me, and make me see the world differently. I'd be honored if you'd consider building something beautiful with me.`,
-            `Dear ${name}, there's a depth to you that I find incredibly compelling. Our conversations stay with me long after they end. I feel like we connect on a level that's uncommon, and I'd love to explore that further with you. Would you be open to that?`,
-            `${name}, I don't take feelings like this lightly. What I feel for you is genuine and profound. You've touched my life in ways that matter, and I believe we could create something really meaningful together. Would you give me the chance to show you?`
-        ],
-        polite: [
-            `Hello ${name}, I wanted to express something that's been on my mind. I have a great deal of respect and admiration for you. If you're comfortable with the idea, I would be delighted to take you out sometime. Please feel free to take your time considering it.`,
-            `Dear ${name}, I hope this doesn't make you uncomfortable, but I wanted to let you know that I've developed feelings for you. I think highly of you and would appreciate the opportunity to get to know you better, if you're interested. There's absolutely no pressure.`,
-            `${name}, I wanted to approach this respectfully. I find myself drawn to your character and personality. If you're open to it, I would love to take you to dinner sometime and see if there's a mutual connection. Please know that I value your friendship regardless of your answer.`
+        'minimal-elegant': [
+            "{{partnerName}}, I like you. I would love to take you out sometime, if you are open to it.",
+            "You feel easy to be around, {{partnerName}}. I would like to explore this, gently and honestly.",
+            "{{partnerName}}, I am interested in you. Would you like to go out together sometime?"
         ]
     };
 
-    // Get templates for the selected emotion
-    const templates = messageTemplates[emotion];
-    
-    // If emotion not found, return a default message
-    if (!templates) {
-        return `Hey ${name}, I really like spending time with you and I think you're wonderful. Would you like to go out with me sometime?`;
-    }
-    
-    // Return a random template from the selected emotion
-    const randomIndex = Math.floor(Math.random() * templates.length);
-    return templates[randomIndex];
+    const list = templates[tone] || templates['deep-romantic'];
+    const message = list[Math.floor(Math.random() * list.length)];
+    return message.replace(/\{\{partnerName\}\}/g, partnerName);
 }
 
-// Generate Message button click handler
-generateMessageBtn.addEventListener('click', function() {
-    const partnerName = partnerNameInput.value.trim();
-    const selectedEmotion = emotionSelect.value;
-    
-    // Validate partner name
-    if (!partnerName) {
-        alert('Please enter your partner\'s name first!');
-        partnerNameInput.focus();
-        return;
-    }
-    
-    // Generate and populate the message
-    const generatedMessage = generateProposalMessage(selectedEmotion, partnerName);
-    proposalMessageInput.value = generatedMessage;
-    
-    // Add a subtle animation to show the message was generated
-    proposalMessageInput.style.backgroundColor = '#f0f9ff';
-    setTimeout(() => {
-        proposalMessageInput.style.backgroundColor = '';
-    }, 500);
-});
+// ==================== PREVIEW RENDERING ====================
 
-// Theme change functionality
-themeSelect.addEventListener('change', function() {
-    const selectedTheme = this.value;
-    // Remove all theme classes
-    document.body.classList.remove('pink', 'dark', 'lavender');
-    // Add selected theme class
-    document.body.classList.add(selectedTheme);
-});
-
-// Generate Proposal button click handler
-generateBtn.addEventListener('click', function() {
-    // Get input values
-    const yourName = yourNameInput.value.trim();
-    const partnerName = partnerNameInput.value.trim();
-    const message = proposalMessageInput.value.trim();
-
-    // Validate inputs
-    if (!yourName || !partnerName || !message) {
-        alert('Please fill in all fields!');
-        return;
-    }
-
-    // Set proposal content
-    coupleNames.textContent = `${yourName} ❤️ ${partnerName}`;
-    customMessage.textContent = message;
-
-    // Hide form and show proposal
-    formSection.classList.add('hidden');
-    proposalSection.classList.remove('hidden');
-});
-
-// Yes button click handler
-yesBtn.addEventListener('click', function() {
-    // Get the couple names for celebration
-    celebrationCouples.textContent = coupleNames.textContent;
-
-    // Hide proposal and show celebration
-    proposalSection.classList.add('hidden');
-    celebrationSection.classList.remove('hidden');
-});
-
-// No button hover handler - move button randomly
-noBtn.addEventListener('mouseenter', function() {
-    moveButtonRandomly();
-});
-
-// Function to move No button to random position within container
-function moveButtonRandomly() {
-    const containerRect = mainContainer.getBoundingClientRect();
-    const buttonRect = noBtn.getBoundingClientRect();
-    
-    // Calculate maximum positions to keep button inside container
-    const maxX = containerRect.width - buttonRect.width - 40; // 40px padding
-    const maxY = containerRect.height - buttonRect.height - 40;
-    
-    // Generate random positions
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
-    
-    // Apply absolute positioning
-    noBtn.style.position = 'absolute';
-    noBtn.style.left = randomX + 'px';
-    noBtn.style.top = randomY + 'px';
-}
-
-// Restart button click handler
-restartBtn.addEventListener('click', function() {
-    resetForm();
-});
-
-// Restart button 2 (from link section) click handler
-restartBtn2.addEventListener('click', function() {
-    resetForm();
-});
-
-// Reset form function
-function resetForm() {
-    // Reset all inputs
-    yourNameInput.value = '';
-    partnerNameInput.value = '';
-    proposalMessageInput.value = '';
-    themeSelect.value = 'pink';
-    photoUpload.value = '';
-    musicUpload.value = '';
-    
-    // Clear file previews
-    photoPreview.innerHTML = '';
-    photoPreview.classList.remove('active');
-    musicPreview.innerHTML = '';
-    musicPreview.classList.remove('active');
-    
-    // Reset uploaded files
-    uploadedPhoto = null;
-    uploadedMusic = null;
-    
-    // Reset theme
-    document.body.classList.remove('pink', 'dark', 'lavender');
-    document.body.classList.add('pink');
-    
-    // Reset No button position
-    noBtn.style.position = 'relative';
-    noBtn.style.left = 'auto';
-    noBtn.style.top = 'auto';
-    
-    // Show form, hide others
-    celebrationSection.classList.add('hidden');
-    proposalSection.classList.add('hidden');
-    linkSection.classList.add('hidden');
-    formSection.classList.remove('hidden');
-}
-
-// ===== LINK GENERATION FEATURE =====
-
-/**
- * Generate shareable proposal link
- * Encodes all data into URL using Base64
- */
-generateLinkBtn.addEventListener('click', function() {
-    // Get input values
+function renderPreview() {
     const yourName = yourNameInput.value.trim();
     const partnerName = partnerNameInput.value.trim();
     const message = proposalMessageInput.value.trim();
     const theme = themeSelect.value;
 
-    // Validate inputs
     if (!yourName || !partnerName || !message) {
-        alert('Please fill in all required fields (names and message)!');
+        alert('Please fill in your name, partner name, and message.');
         return;
     }
 
-    // Create data object
-    const proposalData = {
-        yourName: yourName,
-        partnerName: partnerName,
-        message: message,
-        theme: theme,
-        photo: uploadedPhoto,
-        music: uploadedMusic,
-        timestamp: Date.now()
-    };
+    // Set preview content
+    previewNames.textContent = 'Will you be my Valentine? 💖';
+    fullMessage = message;
+    previewMessage.textContent = '';
+    typingIndex = 0;
+
+    // Handle image preview
+    if (uploadedPhoto) {
+        previewImage.src = uploadedPhoto;
+        previewImageWrap.classList.remove('hidden');
+    } else {
+        previewImageWrap.classList.add('hidden');
+    }
+
+    // Handle music setup
+    if (uploadedMusicUrl) {
+        bgMusic.src = uploadedMusicUrl;
+        bgMusic.volume = Number(volumeControl.value);
+        bgMusic.loop = true;
+        bgMusic.load();
+        musicPanel.classList.remove('hidden');
+    } else {
+        musicPanel.classList.add('hidden');
+        bgMusic.src = '';
+    }
+
+    // Apply theme
+    setThemeClass(theme);
+
+    // Switch sections
+    landingSection.classList.add('hidden');
+    generatorSection.classList.add('hidden');
+    previewSection.classList.remove('hidden');
+
+    // Reset overlays
+    startOverlay.classList.remove('hidden');
+    successOverlay.classList.add('hidden');
+    rejectOverlay.classList.add('hidden');
+}
+
+// ==================== TYPING ANIMATION ====================
+
+function startTyping() {
+    if (!fullMessage) return;
+
+    // Clear any existing typing animation
+    if (typingTimer) {
+        clearInterval(typingTimer);
+    }
+
+    typingIndex = 0;
+    previewMessage.textContent = '';
+
+    typingTimer = setInterval(() => {
+        previewMessage.textContent = fullMessage.slice(0, typingIndex + 1);
+        typingIndex += 1;
+        
+        if (typingIndex >= fullMessage.length) {
+            clearInterval(typingTimer);
+            typingTimer = null;
+        }
+    }, 28);
+}
+
+// ==================== MUSIC CONTROLS ====================
+
+function startMusic() {
+    if (!bgMusic.src) return;
+
+    bgMusic.play()
+        .then(() => {
+            isMusicPlaying = true;
+            playBtn.textContent = '⏸';
+        })
+        .catch(error => {
+            console.error('Audio playback failed:', error);
+            alert('Please tap to enable audio playback.');
+        });
+}
+
+function pauseMusic() {
+    if (!bgMusic.src) return;
+    
+    bgMusic.pause();
+    isMusicPlaying = false;
+    playBtn.textContent = '▶';
+}
+
+function togglePlayPause() {
+    if (isMusicPlaying) {
+        pauseMusic();
+    } else {
+        startMusic();
+    }
+}
+
+function toggleMute() {
+    if (!bgMusic.src) return;
+    
+    bgMusic.muted = !bgMusic.muted;
+    muteBtn.textContent = bgMusic.muted ? '🔇' : '🔊';
+}
+
+function changeVolume(value) {
+    const volume = Number(value);
+    bgMusic.volume = volume;
+    volumeValue.textContent = `${Math.round(volume * 100)}%`;
+}
+
+// ==================== OVERLAY HANDLERS ====================
+
+function handleAccept() {
+    successOverlay.classList.remove('hidden');
+}
+
+function handleReject() {
+    rejectOverlay.classList.remove('hidden');
+    if (isMusicPlaying) {
+        pauseMusic();
+    }
+}
+
+function moveRejectButton() {
+    rejectButtonMoveCount++;
+    
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const buttonWidth = rejectBtn.offsetWidth;
+    const buttonHeight = rejectBtn.offsetHeight;
+    
+    // Calculate safe boundaries (keep button within viewport with padding)
+    const maxX = viewportWidth - buttonWidth - 40;
+    const maxY = viewportHeight - buttonHeight - 40;
+    
+    // Generate random position
+    const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+    const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+    
+    // Apply fixed positioning to move the button
+    rejectBtn.style.position = 'fixed';
+    rejectBtn.style.left = `${randomX}px`;
+    rejectBtn.style.top = `${randomY}px`;
+    rejectBtn.style.transition = 'all 0.3s ease';
+    rejectBtn.style.zIndex = '10';
+    
+    // After 8 attempts, convert to Accept button
+    if (rejectButtonMoveCount >= 8) {
+        rejectBtn.textContent = 'Fine, Accept then! 😅';
+        rejectBtn.style.background = 'linear-gradient(135deg, #22c55e, #86efac)';
+        rejectBtn.style.color = '#052e16';
+        
+        // Remove hover listener and replace click handler
+        rejectBtn.onmouseenter = null;
+        rejectBtn.onclick = handleAccept;
+    }
+}
+
+// ==================== FILE UPLOAD HANDLERS ====================
+
+async function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        photoUpload.value = '';
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        alert('Image size should be under 2MB.');
+        photoUpload.value = '';
+        return;
+    }
 
     try {
-        // Encode data to Base64
-        const jsonString = JSON.stringify(proposalData);
-        const encodedData = btoa(encodeURIComponent(jsonString));
-        
-        // Create full URL
-        const baseUrl = window.location.href.replace('index.html', '');
-        const proposalUrl = `${baseUrl}proposal.html?data=${encodedData}`;
-        
-        // Display the link
-        generatedLink.value = proposalUrl;
-        
-        // Hide form, show link section
-        formSection.classList.add('hidden');
-        linkSection.classList.remove('hidden');
-        
+        uploadedPhoto = await fileToBase64(file);
+        photoPreview.innerHTML = `<img src="${uploadedPhoto}" alt="Preview">`;
     } catch (error) {
-        alert('Error generating link. The data might be too large. Try using smaller files.');
-        console.error(error);
+        console.error('Image upload failed:', error);
+        alert('Failed to load image.');
     }
-});
+}
 
-// Copy link to clipboard
-copyLinkBtn.addEventListener('click', function() {
-    generatedLink.select();
-    generatedLink.setSelectionRange(0, 99999); // For mobile devices
+
+function handleMusicUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check type
+    if (!file.type.startsWith('audio/')) {
+        alert('Please select a valid audio file.');
+        musicUpload.value = '';
+        return;
+    }
+
+    // Limit size
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Audio file too large (max 5MB).');
+        musicUpload.value = '';
+        return;
+    }
+
+    // Revoke previous URL
+    if (uploadedMusicUrl) URL.revokeObjectURL(uploadedMusicUrl);
+
+    // Create new URL for playback
+    uploadedMusicUrl = URL.createObjectURL(file);
+    bgMusic.src = uploadedMusicUrl;
+    bgMusic.load();
+    bgMusic.loop = true;
+    musicPreview.textContent = `Music loaded: ${file.name}`;
+    playBtn.textContent = '▶';
+    isMusicPlaying = false;
+
+    console.log("Music ready:", file.name, uploadedMusicUrl);
+}
+
+// ==================== NAVIGATION HANDLERS ====================
+
+function handleStartCreate() {
+    landingSection.classList.add('hidden');
+    generatorSection.classList.remove('hidden');
+}
+
+function handleGenerateMessage() {
+    const partnerName = partnerNameInput.value.trim();
     
-    // Copy to clipboard
-    navigator.clipboard.writeText(generatedLink.value).then(() => {
-        // Update button text
-        copyLinkBtn.textContent = '✅ Copied!';
-        copyLinkBtn.classList.add('copied');
-        
-        // Reset button after 2 seconds
-        setTimeout(() => {
-            copyLinkBtn.textContent = '📋 Copy';
-            copyLinkBtn.classList.remove('copied');
-        }, 2000);
-    }).catch(err => {
-        // Fallback for older browsers
-        document.execCommand('copy');
-        copyLinkBtn.textContent = '✅ Copied!';
-        
-        setTimeout(() => {
-            copyLinkBtn.textContent = '📋 Copy';
-        }, 2000);
-    });
-});
+    if (!partnerName) {
+        alert('Please enter your partner\'s name first.');
+        partnerNameInput.focus();
+        return;
+    }
 
-// Initialize with default theme
-document.body.classList.add('pink');
+    proposalMessageInput.value = generateRomanticMessage(toneSelect.value, partnerName);
+}
+
+function handleThemeChange() {
+    setThemeClass(themeSelect.value);
+}
+
+function handleStartOverlay() {
+    startOverlay.classList.add('hidden');
+    startMusic();
+    startTyping();
+}
+
+function handleEditProposal() {
+    previewSection.classList.add('hidden');
+    generatorSection.classList.remove('hidden');
+    startOverlay.classList.add('hidden');
+    successOverlay.classList.add('hidden');
+    rejectOverlay.classList.add('hidden');
+    pauseMusic();
+}
+
+// ==================== EVENT LISTENERS ====================
+
+// Navigation
+startCreateBtn.addEventListener('click', handleStartCreate);
+previewBtn.addEventListener('click', renderPreview);
+editBtn.addEventListener('click', handleEditProposal);
+
+// Generator
+generateMessageBtn.addEventListener('click', handleGenerateMessage);
+themeSelect.addEventListener('change', handleThemeChange);
+
+// File Uploads
+photoUpload.addEventListener('change', handlePhotoUpload);
+musicUpload.addEventListener('change', handleMusicUpload);
+
+// Overlays
+startButton.addEventListener('click', handleStartOverlay);
+acceptBtn.addEventListener('click', handleAccept);
+rejectBtn.addEventListener('click', handleReject);
+rejectBtn.addEventListener('mouseenter', moveRejectButton);
+
+// Music Controls
+playBtn.addEventListener('click', togglePlayPause);
+muteBtn.addEventListener('click', toggleMute);
+volumeControl.addEventListener('input', event => changeVolume(event.target.value));
+
+// ==================== INITIALIZATION ====================
+
+generateFloatingHearts();
+changeVolume(volumeControl.value);
+setThemeClass('romantic');
